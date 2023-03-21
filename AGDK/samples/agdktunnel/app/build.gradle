@@ -1,0 +1,155 @@
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import org.gradle.internal.os.OperatingSystem;
+
+apply from: GameSDKPath + '/prepproto.gradle'
+apply plugin: 'com.android.application'
+
+// See README for details on enabling APT
+def useApt = APTEnabled
+
+android {
+    compileSdkVersion 30
+    ndkVersion '23.1.7779620'
+
+    defaultConfig {
+        applicationId 'com.google.sample.agdktunnel'
+        minSdkVersion 24
+        targetSdkVersion 30
+        versionCode     1
+        versionName    '1.0.3'
+    }
+    buildTypes {
+        release {
+            minifyEnabled = false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                          'proguard-rules.pro'
+            externalNativeBuild {
+                cmake {
+                    arguments "-DANDROID_STL=c++_shared",
+                              "-DUSE_ASSET_PACKS=false",
+                              "-DUSE_APT=$useApt"
+                }
+            }
+        }
+        debug {
+            externalNativeBuild {
+                minifyEnabled = false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                        'proguard-rules.pro'
+                cmake {
+                    arguments "-DANDROID_STL=c++_shared",
+                              "-DUSE_ASSET_PACKS=false",
+                              "-DUSE_APT=$useApt"
+                }
+            }
+            multiDexEnabled true
+        }
+    }
+    // Flavor dimension to create mobile and PC build variants
+    flavorDimensions "platform"
+    productFlavors {
+        mobile {
+            getIsDefault().set(true)
+            dimension "platform"
+            applicationIdSuffix ".mobile"
+            versionNameSuffix "-mobile"
+        }
+        playGamesPC {
+            dimension "platform"
+            applicationIdSuffix ".playGamesPC"
+            versionNameSuffix "-playGamesPC"
+
+            // x86 ABI compatibility
+            ndk {
+                abiFilters 'x86'
+            }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
+        }
+    }
+    buildFeatures {
+        prefab true
+    }
+}
+
+dependencies {
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-livedata:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-runtime:2.2.0"
+    implementation "androidx.core:core:1.5.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
+    implementation 'androidx.fragment:fragment:1.2.5'
+    implementation 'com.google.oboe:oboe:1.5.0'
+
+    // Each AGDK library can either be sourced from a local build in app/libs
+    // or from Maven.
+    // See the gamesdk README for information on generating a local build.
+    // Be aware that when using libraries from Maven, the versions here may target
+    // a future release that does not exist yet, which is why a locally built
+    // library is used when agdktunnel depends on the latest features.
+    implementation "androidx.games:games-frame-pacing:1.9.0"
+    implementation "androidx.games:games-performance-tuner:1.5.0-beta01"
+    implementation "androidx.games:games-controller:1.0.0"
+    implementation "androidx.games:games-activity:1.1.0-beta03"
+
+    // Google Play Games dependencies
+    // TODO(b/215589030): release the input sdk public to GMaven
+    playGamesPCImplementation files('libs/inputmapping-1.0.0-beta.aar')
+    // Uncomment to use a locally-built library.
+    //implementation fileTree(dir: 'libs', include: ['GameActivity.aar',
+    //                                               'GameController.aar',
+    //                                               'games-frame-pacing-1.9.0.aar',
+    //                                               'games-performance-tuner-1.5.0.aar'])
+}
+
+android.lintOptions {
+        abortOnError  = false
+}
+
+// Android Performance Tuner validation setup and protoc compile tasks
+task createJar(type: GradleBuild) {
+    buildFile = GameSDKPath + '/src/tuningfork/tools/validation/build.gradle'
+    tasks = ['createJar']
+}
+
+def getProtocPath() {
+    String platformName
+    if (OperatingSystem.current().isLinux()) platformName = "linux-x86/bin/protoc"
+    if (OperatingSystem.current().isMacOsX()) platformName = "mac/bin/protoc"
+    if (OperatingSystem.current().isWindows()) platformName = "win/bin/protoc"
+    return GameSDKPath + "/third_party/protobuf-3.0.0/install/"  + platformName
+}
+
+task buildTuningForkBinFiles(type: Exec) {
+    dependsOn prepare_proto
+    dependsOn createJar
+    commandLine "java",
+            "-jar",
+            GameSDKPath + "/src/tuningfork/tools/validation/build/libs/TuningforkApkValidationTool.jar",
+            "--tuningforkPath",
+            "src/main/assets/tuningfork",
+            "--protoCompiler",
+            getProtocPath()
+}
+
+if (APTEnabled.toBoolean()) {
+    tasks.preBuild.dependsOn("buildTuningForkBinFiles")
+}

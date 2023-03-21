@@ -1,0 +1,14 @@
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/CMakeFiles/portaudio_static.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/CMakeFiles/edit_cache.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/CMakeFiles/rebuild_cache.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/CMakeFiles/list_install_components.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/CMakeFiles/install.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/CMakeFiles/install/local.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/CMakeFiles/install/strip.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-bin/CMakeFiles/oboe.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-bin/CMakeFiles/edit_cache.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-bin/CMakeFiles/rebuild_cache.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-bin/CMakeFiles/list_install_components.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-bin/CMakeFiles/install.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-bin/CMakeFiles/install/local.dir
+/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-bin/CMakeFiles/install/strip.dir

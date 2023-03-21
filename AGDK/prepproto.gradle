@@ -1,0 +1,78 @@
+/*
+ * Copyright 2022 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Common gradle functions for preparing protobuf definitions for use by APT.
+
+import org.gradle.internal.os.OperatingSystem;
+import static groovy.lang.Closure.IDENTITY;
+
+def protobufInstallDir() {
+    def gameSdkRoot = buildscript.sourceFile.getParent()
+    def protoDirName = 'linux-x86'
+    if (OperatingSystem.current().isWindows()) {
+        protoDirName = 'win'
+    } else if (OperatingSystem.current().isMacOsX()) {
+        protoDirName = 'mac'
+    }
+    return new File("${gameSdkRoot}/third_party/protobuf-3.0.0/install/"
+            + protoDirName).getPath()
+}
+
+def getEnvironment() {
+    def env = [:]
+    def trans = IDENTITY
+    if (OperatingSystem.current().isWindows()) {
+        trans = { it.toUpperCase() }
+    }
+    System.getenv().each { entry -> env[trans(entry.key)] = entry.value }
+    return env
+}
+
+task prepare_proto_before() {
+    def gameSdkRoot = buildscript.sourceFile.getParent()
+    def protocBinDir = protobufInstallDir() + "/bin"
+    def sixDir = "${gameSdkRoot}/../external/six"
+    def env = getEnvironment()
+    env['PATH'] = protocBinDir + System.getProperty("path.separator") + env['PATH']
+    env['PYTHONPATH'] = sixDir + System.getProperty("path.separator") + env['PYTHONPATH']
+    doLast {
+        // Install python-protobuf
+        exec {
+            workingDir "${gameSdkRoot}/third_party/protobuf-3.0.0/python"
+            setEnvironment env
+            commandLine "python", "setup.py", "install", "--user"
+        }
+        // Generate nano-pb requirements
+        exec {
+            workingDir "${gameSdkRoot}/../external/nanopb-c/generator/proto"
+            setEnvironment env
+            commandLine 'make'
+        }
+    }
+}
+
+task prepare_proto(dependsOn: prepare_proto_before) {
+    def gameSdkRoot = buildscript.sourceFile.getParent()
+    doLast {
+        exec {
+            workingDir "${gameSdkRoot}"
+            commandLine "python"
+            args = ["ab_info.py"]
+        }
+    }
+}
+
+
