@@ -3,8 +3,6 @@
 #  OBOE_LIBRARIES   - List of libraries when using Oboe.
 #  OBOE_FOUND       - True if Oboe found.
 
-#include("AGDK/samples/gamesdk.cmake")
-#add_gamesdk_target(PACKAGE_DIR "AGDK/" BUILD_TYPE "Release")
 if (NOT DEFINED PA_DIRECTORY)
 	set(PA_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif ()
