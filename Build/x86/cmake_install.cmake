@@ -51,7 +51,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/netresults.wintranet/benfatti/portaudio_oboe-master/lib/pkgconfig" TYPE FILE FILES "/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/arm64-v8a/portaudio-2.0.pc")
+  file(INSTALL DESTINATION "/home/netresults.wintranet/benfatti/portaudio_oboe-master/lib/pkgconfig" TYPE FILE FILES "/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/x86/portaudio-2.0.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -78,7 +78,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/netresults.wintranet/benfatti/portaudio_oboe-master/lib" TYPE STATIC_LIBRARY FILES "/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/arm64-v8a/libportaudio_static.a")
+  file(INSTALL DESTINATION "/home/netresults.wintranet/benfatti/portaudio_oboe-master/lib" TYPE STATIC_LIBRARY FILES "/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/x86/libportaudio_static.a")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -89,5 +89,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/x86/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
