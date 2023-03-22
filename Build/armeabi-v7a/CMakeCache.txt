@@ -214,8 +214,8 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 //Path to a program.
 CMAKE_STRIP:FILEPATH=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip
 
-//The CMake toolchain file
-CMAKE_TOOLCHAIN_FILE:FILEPATH=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/build/cmake/android.toolchain.cmake
+//No help, variable specified on the command line.
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/build/cmake/android.toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -228,6 +228,9 @@ JACK_INCLUDE_DIR:PATH=JACK_INCLUDE_DIR-NOTFOUND
 
 //Path to a library.
 JACK_LIBRARY:FILEPATH=JACK_LIBRARY-NOTFOUND
+
+//Path to a library.
+LOG_LIBRARY:FILEPATH=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/liblog.so
 
 //Path to a file.
 OPENSLES_INCLUDE_DIR:PATH=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include
