@@ -27,7 +27,7 @@ function build_PaOboe {
 
   ABI=$1
   MINIMUM_API_LEVEL=$2
-  ABI_BUILD_DIR=build/${ABI}
+  ABI_BUILD_DIR=Build/${ABI}
 
   echo "Building Pa_Oboe for ${ABI}"
 
