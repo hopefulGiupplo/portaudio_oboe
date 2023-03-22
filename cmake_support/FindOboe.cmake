@@ -8,15 +8,12 @@ if (NOT DEFINED PA_DIRECTORY)
 endif ()
 
 
-set (OBOE_DIRECTORY ${PA_DIRECTORY}/oboe-main)
-
-add_subdirectory(${OBOE_DIRECTORY} ./oboe-bin)
-
-
+set(OBOE_DIRECTORY ${PA_DIRECTORY}/oboe-main)
 set(OBOE_INCLUDE_DIR ${OBOE_DIRECTORY}/include)
+set(OBOE_BUILD_DIR ${OBOE_DIRECTORY}/build)
 
-set(OBOE_LIBRARY ${PA_DIRECTORY}/Build_${ANDROID_ABI}/oboe-bin/liboboe.a)
-set(OBOE_LIBRARY_DIRS ${PA_DIRECTORY}/Build_${ANDROID_ABI}/oboe-bin/)
+set(OBOE_LIBRARY_DIRS ${OBOE_BUILD_DIR}/${ANDROID_ABI})
+set(OBOE_LIBRARY ${OBOE_BUILD_DIR}/${ANDROID_ABI}/liboboe.so)
 
 if(OBOE_INCLUDE_DIR)
 	# Already in cache, be silent
@@ -29,7 +26,7 @@ endif(OBOE_INCLUDE_DIR)
 find_path(OBOE_INCLUDE_DIR oboe/Oboe.h
 		HINTS ${PC_OBOE_INCLUDE_DIR})
 
-find_library(OBOE_LIBRARY NAMES liboboe.a
+find_library(OBOE_LIBRARY NAMES liboboe.so
 		HINTS ${OBOE_LIBRARY_DIRS})
 
 # Handle the QUIETLY and REQUIRED arguments and set OPENSL_FOUND to TRUE if
