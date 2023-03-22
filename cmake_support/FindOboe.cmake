@@ -8,7 +8,7 @@ if (NOT DEFINED PA_DIRECTORY)
 endif ()
 
 
-set (OBOE_DIRECTORY ${PA_DIRECTORY}/../oboe-main)
+set (OBOE_DIRECTORY ${PA_DIRECTORY}/oboe-main)
 
 add_subdirectory(${OBOE_DIRECTORY} ./oboe-bin)
 
