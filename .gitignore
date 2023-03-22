@@ -4,6 +4,9 @@
 *.o
 *.obj
 
+# Visual studio directory
+.vscode
+
 # annoying files
 **/.DS_Store
 

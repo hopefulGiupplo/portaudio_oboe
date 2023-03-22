@@ -16,7 +16,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/build/cmake/hooks/pre/Android-Initialize.cmake"
   "/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/build/cmake/hooks/pre/Android.cmake"
   "/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/build/cmake/platforms.cmake"
-  "/home/netresults.wintranet/benfatti/oboe-main/CMakeLists.txt"
   "CMakeFiles/3.22.1/CMakeCCompiler.cmake"
   "CMakeFiles/3.22.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.22.1/CMakeSystem.cmake"
@@ -66,11 +65,9 @@ set(CMAKE_MAKEFILE_OUTPUTS
 set(CMAKE_MAKEFILE_PRODUCTS
   "portaudio-2.0.pc"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
-  "oboe-bin/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/portaudio_static.dir/DependInfo.cmake"
-  "oboe-bin/CMakeFiles/oboe.dir/DependInfo.cmake"
   )

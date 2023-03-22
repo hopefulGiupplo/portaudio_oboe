@@ -391,7 +391,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -437,7 +437,7 @@ CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding OPENSLES
 FIND_PACKAGE_MESSAGE_DETAILS_OPENSLES:INTERNAL=[/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include][/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/30/libOpenSLES.so][v()]
 //Details about finding Oboe
-FIND_PACKAGE_MESSAGE_DETAILS_Oboe:INTERNAL=[/home/netresults.wintranet/benfatti/oboe-main/include][/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build_arm64-v8a/oboe-bin/liboboe.a][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_Oboe:INTERNAL=[/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-main/include][/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-main/build/arm64-v8a/liboboe.so][v()]
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v0.29.2()]
 JACK_CFLAGS:INTERNAL=
