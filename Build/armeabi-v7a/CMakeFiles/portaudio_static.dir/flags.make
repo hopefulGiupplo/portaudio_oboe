@@ -3,13 +3,13 @@
 
 # compile C with /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/bin/clang
 # compile CXX with /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
-C_DEFINES = -DPA_LITTLE_ENDIAN -DPA_USE_OBOE
+C_DEFINES = -DPA_LITTLE_ENDIAN -DPA_USE_OBOE -DPA_USE_OPENSLES
 
 C_INCLUDES = -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/src/common -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/armeabi-v7a -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/src/os/unix -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-main/include -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/include
 
 C_FLAGS = -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -fexceptions -O2 -g -DNDEBUG -fPIC
 
-CXX_DEFINES = -DPA_LITTLE_ENDIAN -DPA_USE_OBOE
+CXX_DEFINES = -DPA_LITTLE_ENDIAN -DPA_USE_OBOE -DPA_USE_OPENSLES
 
 CXX_INCLUDES = -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/src/common -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/armeabi-v7a -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/src/os/unix -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/oboe-main/include -I/home/netresults.wintranet/benfatti/portaudio_oboe-master/include
 

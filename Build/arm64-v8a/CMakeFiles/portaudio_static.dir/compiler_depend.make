@@ -458,6 +458,90 @@ CMakeFiles/portaudio_static.dir/src/hostapi/oboe/pa_oboe.cpp.o: ../../src/hostap
   /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/log.h \
   ../../include/pa_oboe.h
 
+CMakeFiles/portaudio_static.dir/src/hostapi/opensles/pa_opensles.c.o: ../../src/hostapi/opensles/pa_opensles.c \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/pthread.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/12.0.8/include/limits.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/limits.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/cdefs.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/versioning.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/api-level.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/get_device_api_level_inlines.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/ndk-version.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/12.0.8/include/float.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/limits.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/posix_limits.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/pthread_types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/12.0.8/include/stddef.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/12.0.8/include/__stddef_max_align_t.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/12.0.8/include/stdint.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/stdint.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/wchar_limits.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android/asm/types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/int-ll64.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android/asm/bitsperlong.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/bitsperlong.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/posix_types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/stddef.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/compiler_types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/compiler.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android/asm/posix_types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/posix_types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sched.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/timespec.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/sched.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/time.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/time.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/time.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/time_types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/select.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/signal.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android/asm/sigcontext.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android/asm/sve_context.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/signal_types.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/signal.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android/asm/signal.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/signal.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/signal-defs.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android/asm/siginfo.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/siginfo.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/ucontext.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/user.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/legacy_signal_inlines.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/xlocale.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/semaphore.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/errno.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/errno.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android/asm/errno.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/errno.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/errno-base.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/legacy_errno_inlines.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include/math.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/math.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES_Platform.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES_Android.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES_AndroidConfiguration.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES_AndroidMetadata.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/jni.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/12.0.8/include/stdarg.h \
+  ../../src/common/pa_util.h \
+  ../../include/portaudio.h \
+  ../../src/common/pa_allocation.h \
+  ../../src/common/pa_hostapi.h \
+  ../../src/common/pa_stream.h \
+  ../../src/common/pa_cpuload.h \
+  ../../src/common/pa_process.h \
+  ../../src/common/pa_converters.h \
+  ../../src/common/pa_dither.h \
+  ../../src/common/pa_types.h \
+  ../../src/os/unix/pa_unix_util.h \
+  /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/assert.h \
+  ../../src/common/pa_debugprint.h \
+  ../../include/pa_opensles.h
+
 CMakeFiles/portaudio_static.dir/src/hostapi/skeleton/pa_hostapi_skeleton.c.o: ../../src/hostapi/skeleton/pa_hostapi_skeleton.c \
   /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/string.h \
   /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sys/cdefs.h \
@@ -596,6 +680,8 @@ CMakeFiles/portaudio_static.dir/src/os/unix/pa_unix_util.c.o: ../../src/os/unix/
   ../../src/common/pa_debugprint.h
 
 
+/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES_AndroidMetadata.h:
+
 ../../src/hostapi/skeleton/pa_hostapi_skeleton.c:
 
 ../../include/pa_oboe.h:
@@ -603,6 +689,8 @@ CMakeFiles/portaudio_static.dir/src/os/unix/pa_unix_util.c.o: ../../src/os/unix/
 ../../oboe-main/include/oboe/Version.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/swab.h:
+
+/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/legacy_unistd_inlines.h:
 
@@ -786,11 +874,15 @@ CMakeFiles/portaudio_static.dir/src/os/unix/pa_unix_util.c.o: ../../src/os/unix/
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/stddef.h:
 
+../../include/pa_opensles.h:
+
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/linux/posix_types.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/version:
 
 ../../src/common/pa_dither.h:
+
+/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES_Platform.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/int-ll64.h:
 
@@ -831,6 +923,8 @@ CMakeFiles/portaudio_static.dir/src/os/unix/pa_unix_util.c.o: ../../src/os/unix/
 ../../src/common/pa_dither.c:
 
 ../../src/common/pa_allocation.h:
+
+/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES_AndroidConfiguration.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/malloc.h:
 
@@ -875,6 +969,8 @@ CMakeFiles/portaudio_static.dir/src/os/unix/pa_unix_util.c.o: ../../src/os/unix/
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/sched.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/asm-generic/bitsperlong.h:
+
+/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/jni.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/fortify/stdio.h:
 
@@ -931,6 +1027,8 @@ CMakeFiles/portaudio_static.dir/src/os/unix/pa_unix_util.c.o: ../../src/os/unix/
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/pthread.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/bits/posix_limits.h:
+
+/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/SLES/OpenSLES_Android.h:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/cmath:
 
@@ -1007,6 +1105,8 @@ CMakeFiles/portaudio_static.dir/src/os/unix/pa_unix_util.c.o: ../../src/os/unix/
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/__config:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/legacy_signal_inlines.h:
+
+../../src/hostapi/opensles/pa_opensles.c:
 
 /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/string.h:
 

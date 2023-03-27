@@ -21,6 +21,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/portaudio.dir/src/common/pa_trace.c.o.d"
   "CMakeFiles/portaudio.dir/src/hostapi/oboe/pa_oboe.cpp.o"
   "CMakeFiles/portaudio.dir/src/hostapi/oboe/pa_oboe.cpp.o.d"
+  "CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o"
+  "CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o.d"
   "CMakeFiles/portaudio.dir/src/hostapi/skeleton/pa_hostapi_skeleton.c.o"
   "CMakeFiles/portaudio.dir/src/hostapi/skeleton/pa_hostapi_skeleton.c.o.d"
   "CMakeFiles/portaudio.dir/src/os/unix/pa_unix_hostapis.c.o"

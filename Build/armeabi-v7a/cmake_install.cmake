@@ -56,7 +56,7 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/portaudio.h;/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/pa_oboe.h")
+   "/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/portaudio.h;/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/pa_oboe.h;/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/pa_opensles.h;/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/pa_opensles.h")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
@@ -66,6 +66,8 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "/home/netresults.wintranet/benfatti/portaudio_oboe-master/include" TYPE FILE FILES
     "/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/portaudio.h"
     "/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/pa_oboe.h"
+    "/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/pa_opensles.h"
+    "/home/netresults.wintranet/benfatti/portaudio_oboe-master/include/pa_opensles.h"
     )
 endif()
 

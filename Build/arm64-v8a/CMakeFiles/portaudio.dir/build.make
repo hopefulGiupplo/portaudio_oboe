@@ -265,6 +265,20 @@ CMakeFiles/portaudio.dir/src/hostapi/oboe/pa_oboe.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/portaudio.dir/src/hostapi/oboe/pa_oboe.cpp.s"
 	/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android21 --sysroot=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/netresults.wintranet/benfatti/portaudio_oboe-master/src/hostapi/oboe/pa_oboe.cpp -o CMakeFiles/portaudio.dir/src/hostapi/oboe/pa_oboe.cpp.s
 
+CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o: CMakeFiles/portaudio.dir/flags.make
+CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o: ../../src/hostapi/opensles/pa_opensles.c
+CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o: CMakeFiles/portaudio.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/arm64-v8a/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o"
+	/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --target=aarch64-none-linux-android21 --sysroot=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o -MF CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o.d -o CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o -c /home/netresults.wintranet/benfatti/portaudio_oboe-master/src/hostapi/opensles/pa_opensles.c
+
+CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.i"
+	/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --target=aarch64-none-linux-android21 --sysroot=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/netresults.wintranet/benfatti/portaudio_oboe-master/src/hostapi/opensles/pa_opensles.c > CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.i
+
+CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.s"
+	/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --target=aarch64-none-linux-android21 --sysroot=/home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/netresults.wintranet/benfatti/portaudio_oboe-master/src/hostapi/opensles/pa_opensles.c -o CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.s
+
 # Object files for target portaudio
 portaudio_OBJECTS = \
 "CMakeFiles/portaudio.dir/src/common/pa_allocation.c.o" \
@@ -280,7 +294,8 @@ portaudio_OBJECTS = \
 "CMakeFiles/portaudio.dir/src/hostapi/skeleton/pa_hostapi_skeleton.c.o" \
 "CMakeFiles/portaudio.dir/src/os/unix/pa_unix_hostapis.c.o" \
 "CMakeFiles/portaudio.dir/src/os/unix/pa_unix_util.c.o" \
-"CMakeFiles/portaudio.dir/src/hostapi/oboe/pa_oboe.cpp.o"
+"CMakeFiles/portaudio.dir/src/hostapi/oboe/pa_oboe.cpp.o" \
+"CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o"
 
 # External object files for target portaudio
 portaudio_EXTERNAL_OBJECTS =
@@ -299,11 +314,13 @@ libportaudio.so: CMakeFiles/portaudio.dir/src/hostapi/skeleton/pa_hostapi_skelet
 libportaudio.so: CMakeFiles/portaudio.dir/src/os/unix/pa_unix_hostapis.c.o
 libportaudio.so: CMakeFiles/portaudio.dir/src/os/unix/pa_unix_util.c.o
 libportaudio.so: CMakeFiles/portaudio.dir/src/hostapi/oboe/pa_oboe.cpp.o
+libportaudio.so: CMakeFiles/portaudio.dir/src/hostapi/opensles/pa_opensles.c.o
 libportaudio.so: CMakeFiles/portaudio.dir/build.make
 libportaudio.so: ../../oboe-main/build/arm64-v8a/liboboe.so
 libportaudio.so: /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/21/liblog.so
+libportaudio.so: /home/netresults.wintranet/benfatti/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/21/libOpenSLES.so
 libportaudio.so: CMakeFiles/portaudio.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/arm64-v8a/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX shared library libportaudio.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/netresults.wintranet/benfatti/portaudio_oboe-master/Build/arm64-v8a/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX shared library libportaudio.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/portaudio.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
