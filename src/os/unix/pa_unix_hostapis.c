@@ -102,12 +102,10 @@ PaUtilHostApiInitializer *paHostApiInitializers[] =
         PaSkeleton_Initialize,
 #endif
 
-#if PA_USE_OPENSLES
-        PaOpenSLES_Initialize,
-#endif
-
 #if PA_USE_OBOE
         PaOboe_Initialize,
+#elif PA_USE_OPENSLES
+        PaOpenSLES_Initialize,
 #endif
 
         0   /* NULL terminated array */
