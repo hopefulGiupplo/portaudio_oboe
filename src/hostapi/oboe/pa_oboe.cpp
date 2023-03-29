@@ -74,7 +74,7 @@
 
 #include "pa_oboe.h"
 
-#define MODULE_NAME "LibraryLogs"
+#define MODULE_NAME "PaOboe"
 
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, MODULE_NAME, __VA_ARGS__)
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, MODULE_NAME, __VA_ARGS__)
@@ -399,10 +399,14 @@ bool OboeEngine::tryStream(Direction direction, int32_t sampleRate, int32_t chan
             ->setSampleRate(sampleRate)
             ->setChannelCount(channelCount);
 
-    if(direction == Direction::Input)
+    if(direction == Direction::Input) {
+        LOGI("TRYSTREAM - Direction: Input");
         m_result = m_builder.openStream(inputStream);
-    else
+    }
+    else {
+        LOGI("TRYSTREAM - Direction: Output");
         m_result = m_builder.openStream(outputStream);
+    }
 
     if(m_result != Result::OK) {
         LOGE("Couldn't open the stream in TryStream. Error: %s", convertToText(m_result));
@@ -411,7 +415,7 @@ bool OboeEngine::tryStream(Direction direction, int32_t sampleRate, int32_t chan
 
     if(sampleRate != kUnspecified) {
         m_outcome = (sampleRate == m_builder.getSampleRate());
-        LOGI("Requested sampleRate = %d, builder sampleRate = %d",
+        LOGV("Requested sampleRate = %d, builder sampleRate = %d",
              sampleRate, m_builder.getSampleRate());
     }
     else if(channelCount != kUnspecified) {
@@ -478,6 +482,9 @@ PaError OboeEngine::openStream(Direction direction,
                                Usage androidOutputUsage,
                                InputPreset androidInputPreset){
     PaError m_error = paNoError;
+
+    if(sampleRate < 16000)
+        sampleRate = 44100;
 
     if(direction == Direction::Input) {
         inputBuilder.setChannelCount(oboeStream->bufferProcessor.inputChannelCount)
@@ -903,7 +910,10 @@ PaError PaOboe_Initialize(PaUtilHostApiRepresentation **hostApi, PaHostApiIndex 
                                      WriteStream, GetStreamReadAvailable,
                                      GetStreamWriteAvailable);
 
-    LOGI("Result of PaOboe_Initialize: %d", m_result);
+    if(m_result == 0)
+        LOGV("PaOboe initialized correctly");
+    else
+        LOGE("PaOboe Initialized with error code %d", m_result);
     return m_result;
 
 error:
@@ -1060,6 +1070,7 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
 */
 static PaError InitializeOutputStream(PaOboeHostApiRepresentation *oboeHostApi,
                                       Usage androidOutputUsage, double sampleRate) {
+    LOGV("Initializing output stream.");
     return oboeHostApi->oboeEngine->openStream(Direction::Output,
                                                 sampleRate,
                                                 androidOutputUsage,
@@ -1079,6 +1090,7 @@ static PaError InitializeOutputStream(PaOboeHostApiRepresentation *oboeHostApi,
 */
 static PaError InitializeInputStream(PaOboeHostApiRepresentation *oboeHostApi,
                                      InputPreset androidInputPreset, double sampleRate) {
+    LOGV("Initializing input stream.");
     return oboeHostApi->oboeEngine->openStream(Direction::Input,
                                                sampleRate,
                                                Usage::Media,   //Won't be used, so we put the default value.
@@ -1184,10 +1196,6 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
                 return paIncompatibleHostApiSpecificStreamInfo;
         }
 
-        if (IsOutputSampleRateSupported(m_oboeHostApi, sampleRate) != paNoError) {
-            return paInvalidSampleRate;
-        }
-
         m_hostOutputSampleFormat = PaUtil_SelectClosestAvailableFormat(
             paInt16, m_outputSampleFormat);
     } else {
@@ -1278,10 +1286,8 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
                  + m_oboeStream->framesPerHostCallback) / sampleRate;
         ENSURE(InitializeOutputStream(m_oboeHostApi,
                                       m_androidOutputUsage, sampleRate),
-               "Initializing outputstream failed")
-    } else {
-        m_oboeStream->hasOutput = false;
-    }
+               "Initializing outputstream failed");
+    } else { m_oboeStream->hasOutput = false; }
 
     *s = (PaStream *) m_oboeStream;
     return m_error;
@@ -1289,6 +1295,8 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
 error:
     if (m_oboeStream)
         PaUtil_FreeMemory(m_oboeStream);
+
+    LOGE("Error opening stream. Error code: %d", m_error);
 
     return m_error;
 }
@@ -1340,6 +1348,10 @@ static PaError StartStream(PaStream *s) {
 
     PaUtil_ResetBufferProcessor(&m_stream->bufferProcessor);
 
+    if(m_stream->isActive)
+        if(!(m_oboeEngine->stopStream()))
+            LOGE("Couldn't close the stream before restarting it.");
+
     m_stream->isStopped = false;
     m_stream->isActive = true;
     m_stream->doStop = false;
@@ -1390,20 +1402,25 @@ static PaError StopStream(PaStream *s) {
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
     LOGI("StopStream called.");
 
-    if (!(m_stream->isBlocking)) {
-        m_stream->doStop = true;
+    if(m_stream->isStopped){
+        LOGW("StopStream was called, but stream was already stopped.");
+    }
+    else {
+        if (!(m_stream->isBlocking)) {
+            m_stream->doStop = true;
 //        PaUnixThread_Terminate(&m_stream->streamThread, 1, &m_error);
-    }
-    if(!(m_oboeEngine->stopStream())) {
-        LOGE("Couldn't stop the stream(s).");
-        m_error = paUnanticipatedHostError;
-    }
+        }
+        if (!(m_oboeEngine->stopStream())) {
+            LOGE("Couldn't stop the stream(s).");
+            m_error = paUnanticipatedHostError;
+        }
 
-    m_stream->isActive = false;
-    m_stream->isStopped = true;
-    if (m_stream->streamRepresentation.streamFinishedCallback != nullptr)
-        m_stream->streamRepresentation.streamFinishedCallback(
-            m_stream->streamRepresentation.userData);
+        m_stream->isActive = false;
+        m_stream->isStopped = true;
+        if (m_stream->streamRepresentation.streamFinishedCallback != nullptr)
+            m_stream->streamRepresentation.streamFinishedCallback(
+                    m_stream->streamRepresentation.userData);
+    }
 
     return m_error;
 }
@@ -1480,8 +1497,20 @@ static PaError ReadStream(PaStream *s, void *buffer, unsigned long frames) {
     unsigned m_framesToRead = frames;
     PaError m_error = paNoError;
 
-    if(!(m_oboeEngine->readStream(m_userBuffer, m_framesToRead)))
+    while( frames > 0 )
+    {
+        m_framesToRead = PA_MIN( m_stream->framesPerHostCallback, frames );
+        PaUtil_SetInputFrameCount( &m_stream->bufferProcessor, m_framesToRead );
+        PaUtil_SetInterleavedInputChannels( &m_stream->bufferProcessor, 0,
+                                             m_stream->inputBuffers[m_stream->currentInputBuffer], 0 );
+        PaUtil_CopyInput( &m_stream->bufferProcessor, &m_userBuffer, m_framesToRead);
+        if(!(m_oboeEngine->readStream(m_userBuffer,
+                                       m_framesToRead * m_stream->bufferProcessor.inputChannelCount)))
             m_error = paInternalError;
+
+        m_stream->currentInputBuffer = (m_stream->currentInputBuffer + 1) % numberOfBuffers;
+        frames -= m_framesToRead;
+    }
 
     return m_error;
 }
@@ -1497,11 +1526,23 @@ static PaError WriteStream(PaStream *s, const void *buffer, unsigned long frames
     auto *m_stream = (OboeStream *)s;
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
     const void *m_userBuffer = buffer;
-    unsigned m_framesToWrite = frames;
+    unsigned m_framesToWrite;
     PaError m_error = paNoError;
 
-    if(!(m_oboeEngine->writeStream(m_userBuffer,m_framesToWrite)))
+    while( frames > 0 )
+    {
+        m_framesToWrite = PA_MIN( m_stream->framesPerHostCallback, frames );
+        PaUtil_SetOutputFrameCount( &m_stream->bufferProcessor, m_framesToWrite );
+        PaUtil_SetInterleavedOutputChannels( &m_stream->bufferProcessor, 0,
+                                             m_stream->outputBuffers[m_stream->currentOutputBuffer], 0 );
+        PaUtil_CopyOutput( &m_stream->bufferProcessor, &m_userBuffer, m_framesToWrite);
+        if(!(m_oboeEngine->writeStream(m_userBuffer,
+                                       m_framesToWrite * m_stream->bufferProcessor.outputChannelCount)))
             m_error = paInternalError;
+
+        m_stream->currentOutputBuffer = (m_stream->currentOutputBuffer + 1) % numberOfBuffers;
+        frames -= m_framesToWrite;
+    }
 
     return m_error;
 }
@@ -1528,7 +1569,7 @@ static signed long GetStreamWriteAvailable(PaStream *s) {
 
 
 static unsigned long GetApproximateLowBufferSize() {
-    LOGI("Getting approximate low buffer size.");
+    LOGV("Getting approximate low buffer size.");
     if (__ANDROID_API__ <= 23)
         return 256;
     else
