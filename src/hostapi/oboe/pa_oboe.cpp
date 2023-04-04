@@ -1348,14 +1348,13 @@ static PaError StartStream(PaStream *s) {
 
     PaUtil_ResetBufferProcessor(&m_stream->bufferProcessor);
 
-    if(m_stream->isActive)
-        if(!(m_oboeEngine->stopStream()))
-            LOGE("Couldn't close the stream before restarting it.");
+    if(m_stream->isActive) {
+        LOGW("Stream was already active");
+        StopStream(s);
+        LOGW("Restarting...");
+        StartStream(s);
+    }
 
-    m_stream->isStopped = false;
-    m_stream->isActive = true;
-    m_stream->doStop = false;
-    m_stream->doAbort = false;
     m_stream->currentOutputBuffer = 0;
     m_stream->currentInputBuffer = 0;
 
@@ -1385,6 +1384,11 @@ static PaError StartStream(PaStream *s) {
         //PaUnixThread_New(&(m_stream->streamThread), (void*) StreamProcessingCallback,
         //                 (void *) m_stream, 0, 0);
     }
+
+    m_stream->isStopped = false;
+    m_stream->isActive = true;
+    m_stream->doStop = false;
+    m_stream->doAbort = false;
 
     if(!(m_oboeEngine->startStream()))
         return paUnanticipatedHostError;
@@ -1570,10 +1574,16 @@ static signed long GetStreamWriteAvailable(PaStream *s) {
 
 static unsigned long GetApproximateLowBufferSize() {
     LOGV("Getting approximate low buffer size.");
-    if (__ANDROID_API__ <= 23)
-        return 256;
-    else
-        return 192;
+
+//  This function should return the following values, but was changed in order to add compatibility
+//  with KCTI for android.
+
+//    if (__ANDROID_API__ <= 23)
+//        return 256;
+//    else
+//        return 192;
+
+    return 1024;
 }
 
 
@@ -1582,6 +1592,11 @@ int32_t getSelectedDevice(Direction direction){
         return inputDeviceId;
     else
         return outputDeviceId;
+}
+
+
+int32_t millisToNanos (int32_t timeInMillis){
+    return timeInMillis * 1000000;
 }
 
 

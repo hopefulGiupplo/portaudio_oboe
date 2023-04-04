@@ -54,7 +54,7 @@
 extern "C" {
 #endif //__cplusplus
 
-#define TIMEOUT_NS 100000000
+#define TIMEOUT_NS 1000000000
 
 /**
  *  The android stream type and recording preset as defined in Definitions.h
