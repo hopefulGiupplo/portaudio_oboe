@@ -218,6 +218,7 @@ public:
     bool stopStream();
     bool abortStream();
     bool closeStream();
+    bool restartStream();
 
     //Get access to private data:
     OboeStream* initializeOboeStream(){
@@ -448,14 +449,14 @@ bool OboeEngine::closeStream() {
         m_outputResult = outputStream->close();
         if(m_outputResult == Result::ErrorClosed) {
             m_outputResult = Result::OK;
-            LOGD("Tried to close output stream, but was already closed.");
+            LOGW("Tried to close output stream, but was already closed.");
         }
     }
     if(oboeStream->hasInput) {
         m_inputResult = inputStream->close();
         if(m_inputResult == Result::ErrorClosed) {
             m_inputResult = Result::OK;
-            LOGD("Tried to close input stream, but was already closed.");
+            LOGW("Tried to close input stream, but was already closed.");
         }
     }
 
@@ -651,10 +652,18 @@ bool OboeEngine::writeStream(const void* buffer, int32_t framesToWrite) {
 
     ResultWithValue<int32_t> m_result = outputStream->write(buffer, framesToWrite, TIMEOUT_NS);
 
+    if(m_result.error() == Result::ErrorDisconnected){
+        if(OboeEngine::restartStream())
+            goto restarted;
+    }
+
     if(!m_result){
         LOGE("Error writing stream: %s", convertToText(m_result.error()));
         m_outcome = false;
     }
+    return m_outcome;
+
+restarted:
     return m_outcome;
 }
 
@@ -671,6 +680,42 @@ bool OboeEngine::readStream(void* buffer, int32_t framesToRead) {
         LOGE("Error reading stream: %s", convertToText(m_result.error()));
         m_outcome = false;
     }
+    return m_outcome;
+}
+
+
+bool OboeEngine::restartStream() {
+    bool m_outcome = true;
+
+    LOGI("Restarting Stream(s).");
+
+    OboeEngine::stopStream();
+    OboeEngine::closeStream();
+
+    if(oboeStream->hasInput){
+        if (inputBuilder.openStream(inputStream) != Result::OK) {
+            LOGE("Oboe couldn't reopen the input stream.");
+            goto error;
+        }
+
+    }
+
+    if(oboeStream->hasOutput){
+        if(outputBuilder.openStream(outputStream) != Result::OK) {
+            LOGE("Oboe couldn't reopen the output stream.");
+            goto error;
+        }
+    }
+
+    if(!(OboeEngine::startStream())){
+        LOGE("Oboe couldn't restart the stream(s).");
+        goto error;
+    }
+
+    return m_outcome;
+
+error:
+    m_outcome = false;
     return m_outcome;
 }
 
