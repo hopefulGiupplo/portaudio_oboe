@@ -309,7 +309,7 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
         oboeStream->outputBuffers[oboeStream->currentOutputBuffer] = audioData;
         PaUtil_SetOutputFrameCount(&oboeStream->bufferProcessor, numFrames);
         PaUtil_SetInterleavedOutputChannels(&oboeStream->bufferProcessor, 0,
-                                            (void *) ((float **) oboeStream->outputBuffers)[oboeStream->currentOutputBuffer],
+                                            (void *) ((PaInt16 **) oboeStream->outputBuffers)[oboeStream->currentOutputBuffer],
                                             0);
     }
     if (oboeStream->hasInput) {
@@ -317,7 +317,7 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
         audioData = oboeStream->inputBuffers[oboeStream->currentInputBuffer];
         PaUtil_SetInputFrameCount(&oboeStream->bufferProcessor, 0);
         PaUtil_SetInterleavedInputChannels(&oboeStream->bufferProcessor, 0,
-                                           (void *) ((float **) oboeStream->inputBuffers)[oboeStream->currentInputBuffer],
+                                           (void *) ((PaInt16 **) oboeStream->inputBuffers)[oboeStream->currentInputBuffer],
                                            0);
     }
 
@@ -394,7 +394,7 @@ bool OboeEngine::tryStream(Direction direction, int32_t sampleRate, int32_t chan
     bool m_outcome = false;
 
     m_builder.setSharingMode(SharingMode::Exclusive)
-            ->setFormat(AudioFormat::Float)
+            ->setFormat(oboe::AudioFormat::I16)
             ->setDeviceId(getSelectedDevice(direction))
             ->setDirection(direction)
             ->setSampleRate(sampleRate)
@@ -484,13 +484,10 @@ PaError OboeEngine::openStream(Direction direction,
                                InputPreset androidInputPreset){
     PaError m_error = paNoError;
 
-    if(sampleRate < 16000)
-        sampleRate = 44100;
-
     if(direction == Direction::Input) {
         inputBuilder.setChannelCount(oboeStream->bufferProcessor.inputChannelCount)
-                ->setFormat(AudioFormat::Float)
                 ->setSharingMode(SharingMode::Exclusive)
+                ->setFormat(oboe::AudioFormat::I16)
                 ->setSampleRate(sampleRate)
                 ->setDirection(Direction::Input)
                 ->setDeviceId(getSelectedDevice(Direction::Input))
@@ -531,8 +528,8 @@ PaError OboeEngine::openStream(Direction direction,
         oboeStream->currentInputBuffer = 0;
     } else {
         outputBuilder.setChannelCount(oboeStream->bufferProcessor.outputChannelCount)
-                ->setFormat(AudioFormat::Float)
                 ->setSharingMode(SharingMode::Exclusive)
+                ->setFormat(oboe::AudioFormat::I16)
                 ->setSampleRate(sampleRate)
                 ->setDirection(Direction::Output)
                 ->setDeviceId(getSelectedDevice(Direction::Output))
