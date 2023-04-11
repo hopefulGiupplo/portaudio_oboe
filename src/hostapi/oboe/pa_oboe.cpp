@@ -183,9 +183,11 @@ typedef struct OboeStream{
 
     int callbackResult;
     DataCallbackResult oboeCallbackResult;
-
     PaStreamCallbackFlags cbFlags;
     //PaUnixThread streamThread;
+
+    PaSampleFormat inputFormat;
+    PaSampleFormat outputFormat;
 
     // Buffers are managed by the callback function in Oboe.
     void **outputBuffers;
@@ -247,6 +249,24 @@ private:
     unsigned long framesProcessed{};
     PaStreamCallbackTimeInfo timeInfo{};
     struct timespec timeSpec{};
+
+    //Conversion utils
+    static AudioFormat PaToOboeFormat(PaSampleFormat paFormat){
+        AudioFormat m_oboeFormat;
+        switch (paFormat) {
+            case paFloat32: m_oboeFormat = AudioFormat::Float;
+                break;
+            case paInt16: m_oboeFormat = AudioFormat::I16;
+                break;
+            case paInt32: m_oboeFormat = AudioFormat::I32;
+                break;
+            case paInt24: m_oboeFormat = AudioFormat::I24;
+                break;
+            default: m_oboeFormat = AudioFormat::Unspecified;
+                LOGW("Setting AudioFormat to Unspecified, because Oboe does not support the requested 8-bit format.");
+        }
+        return m_oboeFormat;
+    }
 };
 
 
@@ -393,13 +413,11 @@ bool OboeEngine::tryStream(Direction direction, int32_t sampleRate, int32_t chan
     Result m_result;
     bool m_outcome = false;
 
-    m_builder.setSharingMode(SharingMode::Exclusive)
-            ->setFormat(oboe::AudioFormat::I16)
-            ->setDeviceId(getSelectedDevice(direction))
+    m_builder.setDeviceId(getSelectedDevice(direction))
+            ->setFormat(AudioFormat::I16)
             ->setDirection(direction)
             ->setSampleRate(sampleRate)
             ->setChannelCount(channelCount);
-
     if(direction == Direction::Input) {
         LOGI("TRYSTREAM - Direction: Input");
         m_result = m_builder.openStream(inputStream);
@@ -486,8 +504,8 @@ PaError OboeEngine::openStream(Direction direction,
 
     if(direction == Direction::Input) {
         inputBuilder.setChannelCount(oboeStream->bufferProcessor.inputChannelCount)
-                ->setSharingMode(SharingMode::Exclusive)
-                ->setFormat(oboe::AudioFormat::I16)
+                //->setSharingMode(SharingMode::Exclusive)
+                ->setFormat(PaToOboeFormat(oboeStream->inputFormat)) //TODO: check if format change is working
                 ->setSampleRate(sampleRate)
                 ->setDirection(Direction::Input)
                 ->setDeviceId(getSelectedDevice(Direction::Input))
@@ -528,8 +546,8 @@ PaError OboeEngine::openStream(Direction direction,
         oboeStream->currentInputBuffer = 0;
     } else {
         outputBuilder.setChannelCount(oboeStream->bufferProcessor.outputChannelCount)
-                ->setSharingMode(SharingMode::Exclusive)
-                ->setFormat(oboe::AudioFormat::I16)
+                //->setSharingMode(SharingMode::Exclusive)
+                ->setFormat(PaToOboeFormat(oboeStream->outputFormat)) //TODO: check if format change is working
                 ->setSampleRate(sampleRate)
                 ->setDirection(Direction::Output)
                 ->setDeviceId(getSelectedDevice(Direction::Output))
@@ -1173,6 +1191,13 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
     Usage m_androidOutputUsage = Usage::VoiceCommunication;
     InputPreset m_androidInputPreset = InputPreset::Generic;
 
+    OboeStream* m_oboeStream = m_oboeHostApi->oboeEngine->initializeOboeStream();
+
+    if (!m_oboeStream) {
+        m_error = paInsufficientMemory;
+        goto error;
+    }
+
     LOGI("OpenStream Called.");
 
     if (inputParameters) {
@@ -1203,9 +1228,11 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
         }
         m_hostInputSampleFormat = PaUtil_SelectClosestAvailableFormat(
             paInt16, m_inputSampleFormat);
+        m_oboeStream->inputFormat = m_hostInputSampleFormat;
     } else {
         m_inputChannelCount = 0;
         m_inputSampleFormat = m_hostInputSampleFormat = paInt16; /* Surpress 'uninitialised var' warnings. */
+        m_oboeStream->inputFormat = m_hostInputSampleFormat;
     }
 
     if (outputParameters) {
@@ -1240,9 +1267,11 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
 
         m_hostOutputSampleFormat = PaUtil_SelectClosestAvailableFormat(
             paInt16, m_outputSampleFormat);
+        m_oboeStream->outputFormat = m_hostOutputSampleFormat;
     } else {
         m_outputChannelCount = 0;
         m_outputSampleFormat = m_hostOutputSampleFormat = paInt16;
+        m_oboeStream->outputFormat = m_hostOutputSampleFormat;
     }
 
     /* validate platform specific flags */
@@ -1259,13 +1288,6 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
         }
     } else {
         m_framesPerHostBuffer = framesPerBuffer;
-    }
-
-    OboeStream* m_oboeStream = m_oboeHostApi->oboeEngine->initializeOboeStream();
-
-    if (!m_oboeStream) {
-        m_error = paInsufficientMemory;
-        goto error;
     }
 
     m_oboeHostApi->oboeEngine->setEngineAddress(
@@ -1301,7 +1323,7 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
     m_oboeStream->streamRepresentation.streamInfo.sampleRate = sampleRate;
     m_oboeStream->isBlocking = (streamCallback == nullptr);
     m_oboeStream->framesPerHostCallback = m_framesPerHostBuffer;
-    m_oboeStream->bytesPerFrame = sizeof(int32_t);
+    m_oboeStream->bytesPerFrame = sizeof(int16_t);
     m_oboeStream->cbFlags = 0;
     m_oboeStream->isStopped = true;
     m_oboeStream->isActive = false;
@@ -1353,7 +1375,7 @@ static PaError CloseStream(PaStream *s) {
     PaError m_result = paNoError;
     auto *m_stream = (OboeStream *)s;
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
-    LOGI("CloseStream called.");
+    LOGV("CloseStream called.");
 
     if (!(m_oboeEngine->closeStream()))
         LOGW("Couldn't close the streams correctly.");
@@ -1386,10 +1408,11 @@ static PaError StartStream(PaStream *s) {
     auto *m_stream = (OboeStream *)s;
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
 
-    LOGI("StartStream called.");
+    LOGV("StartStream called.");
 
     PaUtil_ResetBufferProcessor(&m_stream->bufferProcessor);
 
+    //TODO: check if it's working as expected
     if(m_stream->isActive) {
         LOGW("Stream was already active");
         StopStream(s);
