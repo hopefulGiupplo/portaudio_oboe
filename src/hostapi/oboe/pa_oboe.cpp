@@ -577,7 +577,7 @@ bool OboeEngine::abortStream() {
 
 
 /**
- * \brief   Oboe's callback routine. FIXME: this routine doesn't work as expected
+ * \brief   Oboe's callback routine.
  */
 DataCallbackResult
 OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numFrames) {
@@ -596,10 +596,8 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
     /* check if StopStream or AbortStream was called */
     if (oboeStream->doStop) {
         oboeStream->callbackResult = paComplete;
-        LOGV("Callback: doStop -> paComplete");
     } else if (oboeStream->doAbort) {
         oboeStream->callbackResult = paAbort;
-        LOGV("Callback: doAbort -> paAbort");
     }
 
     PaUtil_BeginCpuLoadMeasurement(&oboeStream->cpuLoadMeasurer);
@@ -607,7 +605,6 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
                                  &timeInfo, oboeStream->cbFlags);
 
     if (oboeStream->hasOutput) {
-        LOGV("Callback: hasOutput");
         oboeStream->outputBuffers[oboeStream->currentOutputBuffer] = audioData;
         PaUtil_SetOutputFrameCount(&oboeStream->bufferProcessor, numFrames);
         PaUtil_SetInterleavedOutputChannels(&oboeStream->bufferProcessor, 0,
@@ -615,7 +612,6 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
                                             0);
     }
     if (oboeStream->hasInput) {
-        LOGV("Callback: hasInput");
         audioData = oboeStream->inputBuffers[oboeStream->currentInputBuffer];
         PaUtil_SetInputFrameCount(&oboeStream->bufferProcessor, 0);
         PaUtil_SetInterleavedInputChannels(&oboeStream->bufferProcessor, 0,
@@ -627,7 +623,6 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
     if (oboeStream->callbackResult == paContinue
         || (oboeStream->callbackResult == paComplete
             && !PaUtil_IsBufferProcessorOutputEmpty(&oboeStream->bufferProcessor))) {
-        LOGV("Callback: paContinue or (paComplete and buffers not empty)");
         framesProcessed = PaUtil_EndBufferProcessing(&oboeStream->bufferProcessor,
                                                      &oboeStream->callbackResult);
     }
@@ -636,15 +631,12 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
      * this will be 0 when paComplete + empty buffers or paAbort
      */
     if (framesProcessed > 0) {
-        LOGV("Callback: frameProcessed > 0");
         if (oboeStream->hasOutput) {
             oboeStream->currentOutputBuffer =
                     (oboeStream->currentOutputBuffer + 1) % numberOfBuffers;
-            LOGV("Callback: hasOutput -> scroll buffers");
         }
         if (oboeStream->hasInput) {
             oboeStream->currentInputBuffer = (oboeStream->currentInputBuffer + 1) % numberOfBuffers;
-            LOGV("Callback: hasInput -> scroll buffers");
         }
     }
 
@@ -652,19 +644,17 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
 
     /* StopStream was called */
     if (framesProcessed == 0 && oboeStream->doStop) {
-        LOGV("Callback: StopStream was called");
         oboeStream->oboeCallbackResult = DataCallbackResult::Stop;
     }
 
         /* if AbortStream or StopStream weren't called, stop from the cb */
     else if (framesProcessed == 0 && !(oboeStream->doAbort || oboeStream->doStop)) {
-        LOGV("Callback: AbortStream or StopStream weren't called, but it's time to stop");
         oboeStream->isActive = false;
         oboeStream->isStopped = true;
         if (oboeStream->streamRepresentation.streamFinishedCallback != nullptr)
             oboeStream->streamRepresentation.streamFinishedCallback(
                     oboeStream->streamRepresentation.userData);
-        oboeStream->oboeCallbackResult = DataCallbackResult::Stop;
+        //oboeStream->oboeCallbackResult = DataCallbackResult::Stop; TODO: Resume this test
     }
 
     return oboeStream->oboeCallbackResult;
@@ -673,10 +663,16 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
 
 /**
  * \brief   If the data callback ends without returning DataCallbackResult::Stop, this routine tells
- *          what error occurred. TODO: Implement restartStream
+ *          what error occurred. FIXME: Make a working implementation of RestartStream
  */
-void OboeEngine::onErrorAfterClose(AudioStream *audioStream, oboe::Result error) {
-    LOGE("onErrorAfterClose - Error was %s", oboe::convertToText(error));
+void OboeEngine::onErrorAfterClose(AudioStream *audioStream, Result error) {
+    if (error == oboe::Result::ErrorDisconnected) {
+        LOGW("Callback gave a result of ErrorDisconnected - Restarting AudioStream");
+        if (!restartStream())
+            LOGE("Couldn't restart stream");
+    }
+    else
+        LOGE("onErrorAfterClose - Error was %s", oboe::convertToText(error));
 }
 
 
