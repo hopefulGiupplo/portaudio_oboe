@@ -773,15 +773,19 @@ AudioFormat OboeEngine::PaToOboeFormat(PaSampleFormat paFormat) {
     switch (paFormat) {
         case paFloat32:
             m_oboeFormat = AudioFormat::Float;
+            LOGI("REQUESTED OBOE FORMAT: FLOAT");
             break;
         case paInt16:
             m_oboeFormat = AudioFormat::I16;
+            LOGI("REQUESTED OBOE FORMAT: I16");
             break;
         case paInt32:
             m_oboeFormat = AudioFormat::I32;
+            LOGI("REQUESTED OBOE FORMAT: I32");
             break;
         case paInt24:
             m_oboeFormat = AudioFormat::I24;
+            LOGI("REQUESTED OBOE FORMAT: I24");
             break;
         default:
             m_oboeFormat = AudioFormat::Unspecified;
@@ -1352,7 +1356,7 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
                 return paIncompatibleHostApiSpecificStreamInfo;
         }
         m_hostInputSampleFormat = PaUtil_SelectClosestAvailableFormat(
-                paInt16, m_inputSampleFormat);
+                paFloat32 || paInt16 || paInt24 || paInt32, m_inputSampleFormat);
         m_oboeStream->inputFormat = m_hostInputSampleFormat;
     } else {
         m_inputChannelCount = 0;
@@ -1391,7 +1395,7 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
         }
 
         m_hostOutputSampleFormat = PaUtil_SelectClosestAvailableFormat(
-                paInt16, m_outputSampleFormat);
+                paFloat32 || paInt16 || paInt24 || paInt32, m_outputSampleFormat);
         m_oboeStream->outputFormat = m_hostOutputSampleFormat;
     } else {
         m_outputChannelCount = 0;
