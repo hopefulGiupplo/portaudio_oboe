@@ -1393,7 +1393,6 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
                     )
                 return paIncompatibleHostApiSpecificStreamInfo;
         }
-
         m_hostOutputSampleFormat = PaUtil_SelectClosestAvailableFormat(
                 paFloat32 || paInt16 || paInt24 || paInt32, m_outputSampleFormat);
         m_oboeStream->outputFormat = m_hostOutputSampleFormat;
