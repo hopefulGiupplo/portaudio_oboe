@@ -299,7 +299,7 @@ bool OboeEngine::tryStream(Direction direction, int32_t sampleRate, int32_t chan
     bool m_outcome = false;
 
     m_builder.setDeviceId(getSelectedDevice(direction))
-                    // Arbitrary format usually broadly supported. Later, we'll open streams with correct formats.
+            // Arbitrary format usually broadly supported. Later, we'll open streams with correct formats.
             ->setFormat(AudioFormat::I16)
             ->setDirection(direction)
             ->setSampleRate(sampleRate)
@@ -570,6 +570,11 @@ bool OboeEngine::closeStream() {
 bool OboeEngine::abortStream() {
     Result m_outputResult = Result::OK, m_inputResult = Result::OK;
 
+    if(oboeStream == nullptr){
+        LOGE("[OboeEngine::abortStream]\t Tried to abort a NULL stream. Exiting abortStream.");
+        return false;
+    }
+
     if (oboeStream->hasInput) {
         m_inputResult = inputStream->stop();
         if (m_inputResult != Result::OK)
@@ -830,7 +835,7 @@ PaError IsOutputSampleRateSupported(PaOboeHostApiRepresentation *oboeHostApi, do
     if (!(oboeHostApi->oboeEngine->tryStream(Direction::Output,
                                              sampleRate,
                                              kUnspecified)))
-        LOGW("Output Sample Rate was changed by Oboe. It can be because the device doesn't support it.");
+        LOGW("[PaOboe - IsOutputSampleRateSupported]\t Sample Rate was changed by Oboe. The device might not support high frequencies.");
 
     /*  Since Oboe manages the sample rate in a smart way, we can avoid blocking the process if the
         sample rate we requested wasn't supported.  */
@@ -852,7 +857,7 @@ PaError IsInputSampleRateSupported(PaOboeHostApiRepresentation *oboeHostApi, dou
     if (!(oboeHostApi->oboeEngine->tryStream(Direction::Input,
                                              sampleRate,
                                              kUnspecified)))
-        LOGW("Input Sample Rate was changed by Oboe. It can be because the device doesn't support it.");
+        LOGW("[PaOboe - IsInputSampleRateSupported]\t Sample Rate was changed by Oboe. The device might not support high frequencies.");
 
     /*  Since Oboe manages the sample rate in a smart way, we can avoid blocking the process if the
         sample rate we requested wasn't supported.  */
@@ -873,14 +878,14 @@ static PaError IsOutputChannelCountSupported(
         PaOboeHostApiRepresentation *oboeHostApi,
         int32_t numOfChannels) {
     if (numOfChannels > 2 || numOfChannels == 0) {
-        LOGE("Requested channel count is an invalid number!");
+        LOGE("[PaOboe - IsOutputChannelCountSupported]\t Invalid channel count.");
         return paInvalidChannelCount;
     }
 
     if (!(oboeHostApi->oboeEngine->tryStream(Direction::Output,
                                              kUnspecified,
                                              numOfChannels)))
-        LOGW("Output Channel Count was changed by Oboe. It can be because the device doesn't support it.");
+        LOGW("[PaOboe - IsOutputChannelCountSupported]\t Channel Count was changed by Oboe. The device might not support stereo audio.");
 
     /*  Since Oboe manages the channel count in a smart way, we can avoid blocking the process if
         the sample rate we requested wasn't supported.  */
@@ -901,14 +906,14 @@ static PaError IsInputChannelCountSupported(
         PaOboeHostApiRepresentation *oboeHostApi,
         int32_t numOfChannels) {
     if (numOfChannels > 2 || numOfChannels == 0) {
-        LOGE("Requested channel count is an invalid number!");
+        LOGE("[PaOboe - IsInputChannelCountSupported]\t Invalid channel count.");
         return paInvalidChannelCount;
     }
 
     if (!(oboeHostApi->oboeEngine->tryStream(Direction::Input,
                                              kUnspecified,
                                              numOfChannels)))
-        LOGW("Input Channel Count was changed by Oboe. It can be because the device doesn't support it.");
+        LOGW("[PaOboe - IsInputChannelCountSupported]\t Channel Count was changed by Oboe. The device might not support stereo audio.");
 
     /*  Since Oboe manages the channel count in a smart way, we can avoid blocking the process if
         the sample rate we requested wasn't supported.  */
@@ -930,8 +935,6 @@ PaError PaOboe_Initialize(PaUtilHostApiRepresentation **hostApi, PaHostApiIndex 
     PaOboeHostApiRepresentation *m_oboeHostApi;
     PaDeviceInfo *m_deviceInfoArray;
     char *m_deviceName;
-
-    LOGV("Initializing PaOboe...");
 
     m_oboeHostApi = (PaOboeHostApiRepresentation *) PaUtil_AllocateMemory(
             sizeof(PaOboeHostApiRepresentation));
@@ -1073,9 +1076,9 @@ PaError PaOboe_Initialize(PaUtilHostApiRepresentation **hostApi, PaHostApiIndex 
                                      GetStreamWriteAvailable);
 
     if (m_result == paNoError)
-        LOGV("PaOboe initialized correctly");
+        LOGV("[PaOboe - Initialize]\t Oboe host API successfully initialized");
     else
-        LOGE("PaOboe Initialized with error code %d", m_result);
+        LOGE("[PaOboe - Initialize]\t An unusual error occurred. Error code: %d", m_result);
     return m_result;
 
     error:
@@ -1087,7 +1090,7 @@ PaError PaOboe_Initialize(PaUtilHostApiRepresentation **hostApi, PaHostApiIndex 
 
         PaUtil_FreeMemory(m_oboeHostApi);
     }
-    LOGE("PaOboe_Initialize; error code: %d", m_result);
+    LOGE("[PaOboe - Initialize]\t Initialization failed. Error code: %d", m_result);
     return m_result;
 }
 
@@ -1099,10 +1102,9 @@ PaError PaOboe_Initialize(PaUtilHostApiRepresentation **hostApi, PaHostApiIndex 
  */
 static void Terminate(struct PaUtilHostApiRepresentation *hostApi) {
     auto *m_oboeHostApi = (PaOboeHostApiRepresentation *) hostApi;
-    LOGD("Terminating Pa_Oboe...");
 
     if (!(m_oboeHostApi->oboeEngine->closeStream()))
-        LOGW("Couldn't close the streams correctly.");
+        LOGW("[PaOboe - Terminate]\t Couldn't close the streams correctly - see OboeEngine::CloseStream logs.");
 
     if(m_oboeHostApi->oboeEngine != nullptr)
         delete m_oboeHostApi->oboeEngine;
@@ -1134,7 +1136,6 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
     int m_inputChannelCount, m_outputChannelCount;
     PaSampleFormat m_inputSampleFormat, m_outputSampleFormat;
     auto *m_oboeHostApi = (PaOboeHostApiRepresentation *) hostApi;
-    LOGI("Checking format...");
 
     if (inputParameters) {
         m_inputChannelCount = inputParameters->channelCount;
@@ -1144,21 +1145,21 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
             this implementation doesn't support any custom sample formats */
         if (m_inputSampleFormat & paCustomFormat) {
             m_outcome = paSampleFormatNotSupported;
-            goto error;
+            return m_outcome;
         }
 
         /* unless alternate device specification is supported, reject the use of
             paUseHostApiSpecificDeviceSpecification */
         if (inputParameters->device == paUseHostApiSpecificDeviceSpecification) {
             m_outcome = paInvalidDevice;
-            goto error;
+            return m_outcome;
         }
 
         /* check that input device can support inputChannelCount */
         if (m_inputChannelCount >
             hostApi->deviceInfos[inputParameters->device]->maxInputChannels) {
             m_outcome = paInvalidChannelCount;
-            goto error;
+            return m_outcome;
         }
 
         /* validate inputStreamInfo */
@@ -1173,7 +1174,7 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
                 // Should I add compatibility with VoicePerformance?
                     ) {
                 m_outcome = paIncompatibleHostApiSpecificStreamInfo;
-                goto error;
+                return m_outcome;
             }
         }
     } else {
@@ -1188,21 +1189,21 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
             this implementation doesn't support any custom sample formats */
         if (m_outputSampleFormat & paCustomFormat) {
             m_outcome = paSampleFormatNotSupported;
-            goto error;
+            return m_outcome;
         }
 
         /* unless alternate device specification is supported, reject the use of
             paUseHostApiSpecificDeviceSpecification */
         if (outputParameters->device == paUseHostApiSpecificDeviceSpecification) {
             m_outcome = paInvalidDevice;
-            goto error;
+            return m_outcome;
         }
 
         /* check that output device can support outputChannelCount */
         if (m_outputChannelCount >
             hostApi->deviceInfos[outputParameters->device]->maxOutputChannels) {
             m_outcome = paInvalidChannelCount;
-            goto error;
+            return m_outcome;
         }
 
         /* validate outputStreamInfo */
@@ -1220,7 +1221,7 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
                 // See if more are needed.
                     ) {
                 m_outcome = paIncompatibleHostApiSpecificStreamInfo;
-                goto error;
+                return m_outcome;
             }
         }
     } else {
@@ -1230,20 +1231,17 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
     if (m_outputChannelCount > 0) {
         if (IsOutputSampleRateSupported(m_oboeHostApi, sampleRate) != paNoError) {
             m_outcome = paInvalidSampleRate;
-            goto error;
+            return m_outcome;
         }
     }
     if (m_inputChannelCount > 0) {
         if (IsInputSampleRateSupported(m_oboeHostApi, sampleRate) != paNoError) {
             m_outcome = paInvalidSampleRate;
-            goto error;
+            return m_outcome;
         }
     }
 
     return paFormatIsSupported;
-
-    error:
-    return m_outcome;
 }
 
 
@@ -1260,7 +1258,7 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
  */
 static PaError InitializeOutputStream(PaOboeHostApiRepresentation *oboeHostApi,
                                       Usage androidOutputUsage, double sampleRate) {
-    LOGV("Initializing output stream.");
+
     return oboeHostApi->oboeEngine->openStream(Direction::Output,
                                                sampleRate,
                                                androidOutputUsage,
@@ -1282,7 +1280,7 @@ static PaError InitializeOutputStream(PaOboeHostApiRepresentation *oboeHostApi,
  */
 static PaError InitializeInputStream(PaOboeHostApiRepresentation *oboeHostApi,
                                      InputPreset androidInputPreset, double sampleRate) {
-    LOGV("Initializing input stream.");
+
     return oboeHostApi->oboeEngine->openStream(Direction::Input,
                                                sampleRate,
                                                Usage::Media,   //Won't be used, so we put the default value.
@@ -1334,7 +1332,7 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
         goto error;
     }
 
-    LOGI("OpenStream Called.");
+    LOGI("[PaOboe - OpenStream]\t OpenStream called.");
 
     if (inputParameters) {
         m_inputChannelCount = inputParameters->channelCount;
@@ -1495,7 +1493,7 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
     if (m_oboeStream)
         PaUtil_FreeMemory(m_oboeStream);
 
-    LOGE("Error opening stream. Error code: %d", m_error);
+    LOGE("[PaOboe - OpenStream]\t Error opening stream(s). Error code: %d", m_error);
 
     return m_error;
 }
@@ -1514,7 +1512,7 @@ static PaError CloseStream(PaStream *s) {
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
 
     if (!(m_oboeEngine->closeStream()))
-        LOGW("Couldn't close the streams correctly.");
+        LOGW("[PaOboe - CloseStream]\t Couldn't close the stream(s) correctly - see OboeEngine::CloseStream logs.");
 
     PaUtil_TerminateBufferProcessor(&m_stream->bufferProcessor);
     PaUtil_TerminateStreamRepresentation(&m_stream->streamRepresentation);
@@ -1547,15 +1545,13 @@ static PaError StartStream(PaStream *s) {
     auto *m_stream = (OboeStream *) s;
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
 
-    LOGV("StartStream called.");
-
     PaUtil_ResetBufferProcessor(&m_stream->bufferProcessor);
 
     //Checking if the stream(s) are already active. TODO: check if it's working as expected
     if (m_stream->isActive) {
-        LOGW("Stream was already active");
+        LOGW("[PaOboe - StartStream]\t Stream was already active, stopping...");
         StopStream(s);
-        LOGW("Restarting...");
+        LOGW("[PaOboe - StartStream]\t Restarting...");
         StartStream(s);
     }
 
@@ -1612,10 +1608,9 @@ static PaError StopStream(PaStream *s) {
     PaError m_error = paNoError;
     auto *m_stream = (OboeStream *) s;
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
-    LOGI("StopStream called.");
 
     if (m_stream->isStopped) {
-        LOGW("StopStream was called, but stream was already stopped.");
+        LOGW("[PaOboe - StopStream]\t Stream was already stopped.");
     } else {
         if (!(m_stream->isBlocking)) {
             m_stream->doStop = true;
@@ -1623,7 +1618,7 @@ static PaError StopStream(PaStream *s) {
 //          PaUnixThread_Terminate(&m_stream->streamThread, 1, &m_error);
         }
         if (!(m_oboeEngine->stopStream())) {
-            LOGE("Couldn't stop the stream(s).");
+            LOGE("[PaOboe - StopStream]\t Couldn't stop the stream(s) correctly - see OboeEngine::StopStream logs.");
             m_error = paUnanticipatedHostError;
         }
 
@@ -1649,7 +1644,7 @@ static PaError AbortStream(PaStream *s) {
     PaError m_error = paNoError;
     auto *m_stream = (OboeStream *) s;
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
-    LOGI("AbortStream called.");
+    LOGI("[PaOboe - AbortStream]\t Aborting stream.");
 
     if (!m_stream->isBlocking) {
         m_stream->doAbort = true;
@@ -1659,7 +1654,7 @@ static PaError AbortStream(PaStream *s) {
 
     /* stop immediately so enqueue has no effect */
     if (!(m_oboeEngine->abortStream())) {
-        LOGE("Couldn't abort the stream.");
+        LOGE("[PaOboe - AbortStream]\t Couldn't abort the stream - see OboeEngine::abortStream logs.");
         m_error = paUnanticipatedHostError;
     }
 
@@ -1690,10 +1685,7 @@ static PaError ReadStream(PaStream *s, void *buffer, unsigned long frames) {
 
     while (frames > 0) {
         m_framesToRead = PA_MIN(m_stream->framesPerHostCallback, frames);
-//        PaUtil_SetInputFrameCount(&m_stream->bufferProcessor, m_framesToRead);
-//        PaUtil_SetInterleavedInputChannels(&m_stream->bufferProcessor, 0,
-//                                           m_stream->inputBuffers[m_stream->currentInputBuffer], 0);
-//        PaUtil_CopyInput(&m_stream->bufferProcessor, &m_userBuffer, m_framesToRead);
+
         if (!(m_oboeEngine->readStream(m_userBuffer,
                                        m_framesToRead *
                                        m_stream->bufferProcessor.inputChannelCount)))
@@ -1724,11 +1716,7 @@ static PaError WriteStream(PaStream *s, const void *buffer, unsigned long frames
 
     while (frames > 0) {
         m_framesToWrite = PA_MIN(m_stream->framesPerHostCallback, frames);
-//        PaUtil_SetOutputFrameCount(&m_stream->bufferProcessor, m_framesToWrite);
-//        PaUtil_SetInterleavedOutputChannels(&m_stream->bufferProcessor, 0,
-//                                            m_stream->outputBuffers[m_stream->currentOutputBuffer],
-//                                            0);
-//        PaUtil_CopyOutput(&m_stream->bufferProcessor, &m_userBuffer, m_framesToWrite);
+
         if (!(m_oboeEngine->writeStream(m_userBuffer,
                                         m_framesToWrite *
                                         m_stream->bufferProcessor.outputChannelCount)))
@@ -1830,7 +1818,7 @@ static double GetStreamCpuLoad(PaStream *s) {
 static unsigned long GetApproximateLowBufferSize() {
     LOGV("Getting approximate low buffer size.");
 
-/* TODO: This function should return the following values, but was changed in order to improve
+/* FIXME: This function should return the following commented values, but was changed in order to improve
          compatibility with KCTI for android. Please use the commented values in normal conditions. */
 
 //    if (__ANDROID_API__ <= 23)
@@ -1842,16 +1830,10 @@ static unsigned long GetApproximateLowBufferSize() {
 }
 
 
-//Never used. TODO: I could remove it.
-//int32_t millisToNanos(int32_t timeInMillis) {
-//    return timeInMillis * 1000000;
-//}
-
-
 /*----------------------------- Implementation of PaOboe.h functions -----------------------------*/
 
 void PaOboe_SetSelectedDevice(Direction direction, int32_t deviceID) {
-    LOGV("Selectng device...");
+    LOGI("[PaOboe - SetSelectedDevice] Selecting device...");
     if (direction == Direction::Input)
         inputDeviceId = deviceID;
     else
