@@ -357,6 +357,7 @@ bool OboeEngine::tryStream(Direction direction, int32_t sampleRate, int32_t chan
 PaError OboeEngine::openStream(Direction direction, int32_t sampleRate,
                                Usage androidOutputUsage, InputPreset androidInputPreset) {
     PaError m_error = paNoError;
+    Result m_result;
 
     if (direction == Direction::Input) {
         inputBuilder.setChannelCount(oboeStream->bufferProcessor.inputChannelCount)
@@ -373,8 +374,11 @@ PaError OboeEngine::openStream(Direction direction, int32_t sampleRate,
                     ->setPerformanceMode(PerformanceMode::LowLatency);
         }
 
-        if (inputBuilder.openStream(inputStream) != Result::OK) {
-            LOGE("[OboeEngine::OpenStream]\t Oboe couldn't open the input stream.");
+        m_result = inputBuilder.openStream(inputStream);
+
+        if (m_result != Result::OK) {
+            LOGE("[OboeEngine::OpenStream]\t Oboe couldn't open the input stream: %s",
+                 convertToText(m_result));
             m_error = paUnanticipatedHostError;
             return m_error;
         }
@@ -414,8 +418,10 @@ PaError OboeEngine::openStream(Direction direction, int32_t sampleRate,
                     ->setPerformanceMode(PerformanceMode::LowLatency);
         }
 
-        if (outputBuilder.openStream(outputStream) != Result::OK) {
-            LOGE("[OboeEngine::OpenStream]\t Oboe couldn't open the output stream.");
+        m_result = outputBuilder.openStream(outputStream);
+        if (m_result != Result::OK) {
+            LOGE("[OboeEngine::OpenStream]\t Oboe couldn't open the output stream: %s",
+                 convertToText(m_result));
             m_error = paUnanticipatedHostError;
             return m_error;
         }
@@ -457,12 +463,14 @@ bool OboeEngine::startStream() {
     if (oboeStream->hasInput) {
         m_inputResult = inputStream->requestStart();
         if (m_inputResult != Result::OK)
-            LOGE("[OboeEngine::startStream]\t Oboe couldn't start the input stream.");
+            LOGE("[OboeEngine::startStream]\t Oboe couldn't start the input stream: %s",
+                 convertToText(m_inputResult));
     }
     if (oboeStream->hasOutput) {
         m_outputResult = outputStream->requestStart();
         if (m_outputResult != Result::OK)
-            LOGE("[OboeEngine::startStream]\t Oboe couldn't start the output stream.");
+            LOGE("[OboeEngine::startStream]\t Oboe couldn't start the output stream: %s",
+                 convertToText(m_outputResult));
     }
 
     return (m_outputResult == Result::OK && m_inputResult == Result::OK);
@@ -480,12 +488,14 @@ bool OboeEngine::stopStream() {
     if (oboeStream->hasInput) {
         m_inputResult = inputStream->requestStop();
         if (m_inputResult != Result::OK)
-            LOGE("[OboeEngine::stopStream]\t Oboe couldn't stop the input stream.");
+            LOGE("[OboeEngine::stopStream]\t Oboe couldn't stop the input stream: %s",
+                 convertToText(m_inputResult));
     }
     if (oboeStream->hasOutput) {
         m_outputResult = outputStream->requestStop();
         if (m_outputResult != Result::OK)
-            LOGE("[OboeEngine::stopStream]\t Oboe couldn't stop the output stream.");
+            LOGE("[OboeEngine::stopStream]\t Oboe couldn't stop the output stream: %s",
+                 convertToText(m_outputResult));
     }
 
     return (m_outputResult == Result::OK && m_inputResult == Result::OK);
@@ -499,22 +509,28 @@ bool OboeEngine::stopStream() {
  */
 bool OboeEngine::restartStream() {
     bool m_outcome = true;
+    Result m_result;
 
     //Stop and close the oboeStream:
     LOGI("[OboeEngine::restartStream]\t Restarting Stream(s).");
-    //FIXME: the apps can write onto closed streams and crash, improve thread safety
-    OboeEngine::stopStream();
-    OboeEngine::closeStream();
+    //FIXME: KCTI crashes when ErrorDisconnected occurs
+    if(!abortStream()){
+        LOGW("[OboeEngine::restartStream]\t Oboe couldn't fully abort the active streams.");
+    }
 
     //Reopen any audio stream that needs to be active:
     if (oboeStream->hasInput) {
-        if (inputBuilder.openStream(inputStream) != Result::OK) {
-            LOGE("[OboeEngine::restartStream]\t Oboe couldn't reopen the input stream.");
+        m_result = inputBuilder.openStream(inputStream);
+        if ( m_result!= Result::OK) {
+            LOGE("[OboeEngine::restartStream]\t Oboe couldn't reopen the input stream: %s",
+                 convertToText(m_result));
         }
     }
     if (oboeStream->hasOutput) {
-        if (outputBuilder.openStream(outputStream) != Result::OK) {
-            LOGE("[OboeEngine::restartStream]\t Oboe couldn't reopen the output stream.");
+        m_result = outputBuilder.openStream(outputStream);
+        if (m_result != Result::OK) {
+            LOGE("[OboeEngine::restartStream]\t Oboe couldn't reopen the output stream: %s",
+                 convertToText(m_result));
         }
     }
 
@@ -575,18 +591,22 @@ bool OboeEngine::abortStream() {
     if (oboeStream->hasInput) {
         m_inputResult = inputStream->stop();
         if (m_inputResult != Result::OK)
-            LOGE("[OboeEngine::abortStream]\t Couldn't force the input stream to stop.");
+            LOGE("[OboeEngine::abortStream]\t Couldn't force the input stream to stop: %s",
+                 convertToText(m_inputResult));
         m_inputResult = inputStream->close();
         if (m_inputResult != Result::OK)
-            LOGE("[OboeEngine::abortStream]\t Couldn't force the input stream to close.");
+            LOGE("[OboeEngine::abortStream]\t Couldn't force the input stream to close: %s",
+                 convertToText(m_inputResult));
     }
     if (oboeStream->hasOutput) {
         m_outputResult = outputStream->stop();
         if (m_outputResult != Result::OK)
-            LOGE("[OboeEngine::abortStream]\t Couldn't force the output stream to stop.");
+            LOGE("[OboeEngine::abortStream]\t Couldn't force the output stream to stop: %s",
+                 convertToText(m_outputResult));
         m_outputResult = outputStream->close();
         if (m_outputResult != Result::OK)
-            LOGE("[OboeEngine::abortStream]\t Couldn't force the output stream to close.");
+            LOGE("[OboeEngine::abortStream]\t Couldn't force the output stream to close: %s",
+                 convertToText(m_outputResult));
     }
 
     return (m_outputResult == Result::OK && m_inputResult == Result::OK);
@@ -594,7 +614,7 @@ bool OboeEngine::abortStream() {
 
 
 /**
- * \brief   Oboe's callback routine.
+ * \brief   Oboe's callback routine. FIXME: implement onErrorAfterClose correctly
  */
 DataCallbackResult
 OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numFrames) {
@@ -671,7 +691,7 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
         if (oboeStream->streamRepresentation.streamFinishedCallback != nullptr)
             oboeStream->streamRepresentation.streamFinishedCallback(
                     oboeStream->streamRepresentation.userData);
-        //oboeStream->oboeCallbackResult = DataCallbackResult::Stop; TODO: Resume this test
+        //oboeStream->oboeCallbackResult = DataCallbackResult::Stop; TODO: Resume this test (onAudioReady)
     }
 
     return oboeStream->oboeCallbackResult;
@@ -1168,7 +1188,7 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
 
         /* validate inputStreamInfo */
         if (inputParameters->hostApiSpecificStreamInfo) {
-            // Only has an effect on ANDROID_API>=28. TODO: Check if it needs a rework.
+            // Only has an effect on ANDROID_API>=28.
             InputPreset m_androidRecordingPreset =
                     ((PaOboeStreamInfo *) outputParameters->hostApiSpecificStreamInfo)->androidInputPreset;
             if (m_androidRecordingPreset != InputPreset::Generic &&
@@ -1212,7 +1232,7 @@ static PaError IsFormatSupported(struct PaUtilHostApiRepresentation *hostApi,
 
         /* validate outputStreamInfo */
         if (outputParameters->hostApiSpecificStreamInfo) {
-            // Only has an effect on ANDROID_API>=28. TODO: Check if it needs a rework.
+            // Only has an effect on ANDROID_API>=28.
             Usage m_androidOutputUsage =
                     ((PaOboeStreamInfo *) outputParameters->hostApiSpecificStreamInfo)->androidOutputUsage;
             if (m_androidOutputUsage != Usage::Media &&
@@ -1353,7 +1373,7 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
 
         /* validate inputStreamInfo */
         if (inputParameters->hostApiSpecificStreamInfo) {
-            // Only has an effect on ANDROID_API>=28. TODO: Check if it needs a rework.
+            // Only has an effect on ANDROID_API>=28.
             m_androidInputPreset =
                     ((PaOboeStreamInfo *) outputParameters->hostApiSpecificStreamInfo)->androidInputPreset;
             if (m_androidInputPreset != InputPreset::Generic &&
@@ -1555,7 +1575,7 @@ static PaError StartStream(PaStream *s) {
 
     PaUtil_ResetBufferProcessor(&m_stream->bufferProcessor);
 
-    //Checking if the stream(s) are already active. TODO: check if it's working as expected
+    //Checking if the stream(s) are already active. TODO: check if it's working as expected (extensive testing needed, no problem spotted with situational tests)
     if (m_stream->isActive) {
         LOGW("[PaOboe - StartStream]\t Stream was already active, stopping...");
         StopStream(s);
@@ -1588,9 +1608,6 @@ static PaError StartStream(PaStream *s) {
     if (!m_stream->isBlocking) {
         m_stream->callbackResult = paContinue;
         m_stream->oboeCallbackResult = DataCallbackResult::Continue;
-        //FIXME: the thread function doesn't work
-        //PaUnixThread_New(&(m_stream->streamThread), (void*) StreamProcessingCallback,
-        //                 (void *) m_stream, 0, 0);
     }
 
     m_stream->isStopped = false;
@@ -1622,8 +1639,6 @@ static PaError StopStream(PaStream *s) {
     } else {
         if (!(m_stream->isBlocking)) {
             m_stream->doStop = true;
-//          FIXME: the thread function doesn't work
-//          PaUnixThread_Terminate(&m_stream->streamThread, 1, &m_error);
         }
         if (!(m_oboeEngine->stopStream())) {
             LOGE("[PaOboe - StopStream]\t Couldn't stop the stream(s) correctly - see OboeEngine::StopStream logs.");
