@@ -182,7 +182,6 @@ typedef struct OboeStream {
     int callbackResult;
     DataCallbackResult oboeCallbackResult;
     PaStreamCallbackFlags cbFlags;
-    //PaUnixThread streamThread; FIXME: Thread function doesn't work
 
     PaSampleFormat inputFormat;
     PaSampleFormat outputFormat;
@@ -285,8 +284,6 @@ OboeEngine::OboeEngine() {
  *          channel count @channelCount. It then checks if the stream was in fact opened with the
  *          desired settings, and then closes the stream. It's used to see if the requested
  *          parameters are supported by the devices that are going to be used.
- * TODO: Since Oboe is smart, this step could be skipped with some rework of the whole initialization.
- *
  * @param   direction the Direction of the stream;
  * @param   sampleRate the sample rate we want to try;
  * @param   channelCount the channel count we want to try;
@@ -579,11 +576,17 @@ bool OboeEngine::abortStream() {
         m_inputResult = inputStream->stop();
         if (m_inputResult != Result::OK)
             LOGE("[OboeEngine::abortStream]\t Couldn't force the input stream to stop.");
+        m_inputResult = inputStream->close();
+        if (m_inputResult != Result::OK)
+            LOGE("[OboeEngine::abortStream]\t Couldn't force the input stream to close.");
     }
     if (oboeStream->hasOutput) {
         m_outputResult = outputStream->stop();
         if (m_outputResult != Result::OK)
             LOGE("[OboeEngine::abortStream]\t Couldn't force the output stream to stop.");
+        m_outputResult = outputStream->close();
+        if (m_outputResult != Result::OK)
+            LOGE("[OboeEngine::abortStream]\t Couldn't force the output stream to close.");
     }
 
     return (m_outputResult == Result::OK && m_inputResult == Result::OK);
@@ -751,6 +754,7 @@ bool OboeEngine::readStream(void *buffer, int32_t framesToRead) {
     }
     return m_outcome;
 }
+
 
 /**
  * \brief   Allocates the memory of oboeStream.
@@ -1360,6 +1364,8 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
                     )
                 return paIncompatibleHostApiSpecificStreamInfo;
         }
+    /* FIXME: Replace "paInt16" with whatever format you prefer -
+     *  PaUtil_SelectClosestAvailableFormat is a bit faulty when working with multiple options */
         m_hostInputSampleFormat = PaUtil_SelectClosestAvailableFormat(
                 paInt16, m_inputSampleFormat);
         m_oboeStream->inputFormat = m_hostInputSampleFormat;
@@ -1398,8 +1404,10 @@ static PaError OpenStream(struct PaUtilHostApiRepresentation *hostApi,
                     )
                 return paIncompatibleHostApiSpecificStreamInfo;
         }
+    /* FIXME: Replace "paInt16" with whatever format you prefer -
+     *  PaUtil_SelectClosestAvailableFormat is a bit faulty when working with multiple options */
         m_hostOutputSampleFormat = PaUtil_SelectClosestAvailableFormat(
-                paInt16, m_outputSampleFormat); //TODO: add compatibility with other formats
+                paInt16, m_outputSampleFormat);
         m_oboeStream->outputFormat = m_hostOutputSampleFormat;
     } else {
         m_outputChannelCount = 0;
@@ -1648,8 +1656,6 @@ static PaError AbortStream(PaStream *s) {
 
     if (!m_stream->isBlocking) {
         m_stream->doAbort = true;
-//          FIXME: thread function doesn't work
-//          PaUnixThread_Terminate(&m_stream->streamThread, 0, &m_error);
     }
 
     /* stop immediately so enqueue has no effect */
@@ -1680,7 +1686,7 @@ static PaError ReadStream(PaStream *s, void *buffer, unsigned long frames) {
     auto *m_stream = (OboeStream *) s;
     auto *m_oboeEngine = reinterpret_cast<OboeEngine *>(m_stream->engineAddress);
     void *m_userBuffer = buffer;
-    unsigned m_framesToRead = frames;
+    unsigned m_framesToRead;
     PaError m_error = paNoError;
 
     while (frames > 0) {
