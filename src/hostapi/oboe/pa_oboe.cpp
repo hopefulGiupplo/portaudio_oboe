@@ -511,7 +511,7 @@ bool OboeEngine::restartStream(int direction) {
     bool m_outcome = true;
     Result m_result;
 
-    //FIXME: KCTI crashes when ErrorDisconnected occurs
+    //TODO: Test if KCTI crashes when ErrorDisconnected occurs
     switch (direction) {
         case 1: //output-only
             //stopping and closing
