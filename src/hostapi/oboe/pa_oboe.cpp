@@ -1837,8 +1837,6 @@ static double GetStreamCpuLoad(PaStream *s) {
  * @return  256 for Android API Level <= 23, 192 otherwise.
  */
 static unsigned long GetApproximateLowBufferSize() {
-    LOGV("Getting approximate low buffer size.");
-
 /* FIXME: This function should return the following commented values, but was changed in order to improve
          compatibility with KCTI for android. Please use the commented values in normal conditions. */
 
