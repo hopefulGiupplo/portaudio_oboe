@@ -1,13 +1,7 @@
-Portaudio with OpenSL ES implementation for android.
+Portaudio with Oboe implementation for android.
 
-example java apk:
-https://gundersanne.github.io/pa-android-tests/
-
-cli tests and source code of java example:
-https://github.com/Gundersanne/pa-android-tests
-
-README of opensles implementation with known issues:
-https://github.com/Gundersanne/portaudio_opensles/tree/master/src/hostapi/opensles
+README of oboe implementation with known issues:
+see /src/hostapi/oboe/README.txt
 
 
 Portaudio README:
@@ -89,6 +83,7 @@ Host API Implementations:
     src/hostapi/coreaudio   = Macintosh Core Audio for OS X
     src/hostapi/dsound      = Windows Direct Sound
     src/hostapi/jack        = JACK Audio Connection Kit
+    src/hostapi/oboe        = Oboe for Android
     src/hostapi/oss         = Unix Open Sound System (OSS)
     src/hostapi/wasapi      = Windows Vista WASAPI
     src/hostapi/wdmks       = Windows WDM Kernel Streaming
