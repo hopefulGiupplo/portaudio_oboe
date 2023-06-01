@@ -213,7 +213,7 @@ public:
                        Usage outputUsage, InputPreset inputPreset);
     bool startStream();
     bool stopStream();
-    bool restartStream();
+    bool restartStream(int direction);
     bool closeStream();
     bool abortStream();
 
@@ -507,37 +507,65 @@ bool OboeEngine::stopStream() {
  *          audio devices change while a stream is started.
  * @return  true if the stream is restarted successfully, false otherwise.
  */
-bool OboeEngine::restartStream() {
+bool OboeEngine::restartStream(int direction) {
     bool m_outcome = true;
     Result m_result;
 
-    //Stop and close the oboeStream:
-    LOGI("[OboeEngine::restartStream]\t Restarting Stream(s).");
     //FIXME: KCTI crashes when ErrorDisconnected occurs
-    if(!abortStream()){
-        LOGW("[OboeEngine::restartStream]\t Oboe couldn't fully abort the active streams.");
-    }
+    switch (direction) {
+        case 1: //output-only
+            //stopping and closing
+            m_result = outputStream->stop();
+            if (m_result != Result::OK)
+                LOGW("[OboeEngine::restartStream]\t Oboe couldn't stop the output stream: %s",
+                     convertToText(m_result));
+            m_result = outputStream->close();
+            if (m_result != Result::OK)
+                LOGW("[OboeEngine::restartStream]\t Oboe couldn't close the output stream: %s",
+                     convertToText(m_result));
 
-    //Reopen any audio stream that needs to be active:
-    if (oboeStream->hasInput) {
-        m_result = inputBuilder.openStream(inputStream);
-        if ( m_result!= Result::OK) {
-            LOGE("[OboeEngine::restartStream]\t Oboe couldn't reopen the input stream: %s",
-                 convertToText(m_result));
-        }
-    }
-    if (oboeStream->hasOutput) {
-        m_result = outputBuilder.openStream(outputStream);
-        if (m_result != Result::OK) {
-            LOGE("[OboeEngine::restartStream]\t Oboe couldn't reopen the output stream: %s",
-                 convertToText(m_result));
-        }
-    }
+            //reopening and restarting
+            m_result = outputBuilder.openStream(outputStream);
+            if (m_result != Result::OK)
+                LOGE("[OboeEngine::restartStream]\t Oboe couldn't reopen the output stream: %s",
+                     convertToText(m_result));
+            m_result = outputStream->start();
+            if (m_result != Result::OK) {
+                LOGE("[OboeEngine::restartStream]\t Oboe couldn't restart the output stream: %s",
+                     convertToText(m_result));
+                m_outcome = false;
+            }
+            break;
 
-    //Restart!
-    if (!(OboeEngine::startStream())) {
-        LOGE("[OboeEngine::restartStream]\t Oboe couldn't restart the stream(s).");
-        m_outcome = false;
+        case 2: //input-only
+            //stopping and closing
+            m_result = inputStream->stop();
+            if (m_result != Result::OK)
+                LOGW("[OboeEngine::restartStream]\t Oboe couldn't stop the input stream: %s",
+                     convertToText(m_result));
+            m_result = inputStream->close();
+            if (m_result != Result::OK)
+                LOGW("[OboeEngine::restartStream]\t Oboe couldn't close the input stream: %s",
+                     convertToText(m_result));
+
+            //reopening and restarting
+            m_result = inputBuilder.openStream(inputStream);
+            if (m_result != Result::OK)
+                LOGE("[OboeEngine::restartStream]\t Oboe couldn't reopen the input stream: %s",
+                     convertToText(m_result));
+            m_result = inputStream->start();
+            if (m_result != Result::OK) {
+                LOGE("[OboeEngine::restartStream]\t Oboe couldn't restart the input stream: %s",
+                     convertToText(m_result));
+                m_outcome = false;
+            }
+            break;
+
+        default:
+            // unspecified direction or both directions, abort streams
+            LOGW("[OboeEngine::restartStream]\t Unspecified direction, restarting both streams");
+            m_outcome = (restartStream(1) && restartStream(2));
+            break;
     }
 
     return m_outcome;
@@ -705,7 +733,7 @@ OboeEngine::onAudioReady(AudioStream *audioStream, void *audioData, int32_t numF
 void OboeEngine::onErrorAfterClose(AudioStream *audioStream, Result error) {
     if (error == oboe::Result::ErrorDisconnected) {
         LOGW("[OboeEngine::onErrorAfterClose]\t ErrorDisconnected - Restarting stream(s)");
-        if (!restartStream())
+        if (!restartStream(0))
             LOGE("[OboeEngine::onErrorAfterClose]\t Couldn't restart stream(s)");
     }
     else
@@ -737,7 +765,7 @@ bool OboeEngine::writeStream(const void *buffer, int32_t framesToWrite) {
 
     // If the stream is interrupted because the device suddenly changes, restart the stream.
     if (m_result.error() == Result::ErrorDisconnected) {
-        if (OboeEngine::restartStream())
+        if (OboeEngine::restartStream(1))
             return true;
     }
 
@@ -764,7 +792,7 @@ bool OboeEngine::readStream(void *buffer, int32_t framesToRead) {
 
     // If the stream is interrupted because the device suddenly changes, restart the stream.
     if (m_result.error() == Result::ErrorDisconnected) {
-        if (OboeEngine::restartStream())
+        if (OboeEngine::restartStream(2))
             return true;
     }
 
