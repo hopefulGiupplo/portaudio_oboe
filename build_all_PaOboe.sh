@@ -12,7 +12,7 @@ if [ -z "$ANDROID_NDK" ]; then
   exit 1
 fi
 
-# Directories, paths and filenames
+# Build directory
 BUILD_DIR=build
 
 CMAKE_ARGS="-H. \
