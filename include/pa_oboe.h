@@ -1,12 +1,14 @@
 /*
  * $Id:
  * PortAudio Portable Real-Time Audio Library
+ * Latest Version at: http://www.portaudio.com
  *
- * Copyright (c) 1999-2000 Ross Bencina and Phil Burk
+ * Android Oboe implementation of PortAudio based on Sanne Raymaekers' work with OpenSLES.
  *
- * Android Oboe-specific extensions
- * Copyright (c) 2022-2023 by NetResults S.r.l. ( http://www.netresults.it )
- *      Author: Carlo Benfatti <benfatti@netresults.it>
+ ****************************************************************************************
+ *      Author:                                                                         *
+ *              Carlo Benfatti          <benfatti@netresults.it>                        *
+ ****************************************************************************************
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files

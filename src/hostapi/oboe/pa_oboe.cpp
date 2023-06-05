@@ -6,7 +6,6 @@
  * Android Oboe implementation of PortAudio based on Sanne Raymaekers' work with OpenSLES.
  *
  ****************************************************************************************
- *      Copyright (c) 2022-2023 by NetResults S.r.l. ( https://www.netresults.it )      *
  *      Author:                                                                         *
  *              Carlo Benfatti          <benfatti@netresults.it>                        *
  ****************************************************************************************
