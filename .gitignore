@@ -7,6 +7,9 @@
 # Visual studio directory
 .vscode
 
+# Oboe directory
+oboe-main
+
 # annoying files
 **/.DS_Store
 
