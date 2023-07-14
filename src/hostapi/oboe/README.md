@@ -35,4 +35,4 @@ Portaudio often tries to get approximately low buffer sizes, and if you need spe
 
 
 ###  Device selection and/or switching mid-stream:
-Device selection can be handled by a java/kotlin method that uses getDevices() in order to identify  which device to select. Switching mid-stream gives an oboe::ErrorDisconnected result, and you'll have  to stop, close and reopen the involved streams with an unspecified device (or a specific device if  you know its ID).
+Device selection can be handled by a java/kotlin method that uses getDevices() in order to identify  which device to select. Switching mid-stream gives an oboe::Result::ErrorDisconnected, and you'll have  to stop, close and reopen the involved streams with an unspecified device (or a specific device if  you know its ID). This process is already implemented through the OboeEngine::restartStream method, used by the OboeEngine::write and OboeEngine::read functions.
