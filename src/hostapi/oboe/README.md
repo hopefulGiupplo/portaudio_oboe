@@ -11,6 +11,7 @@ To build portaudio with Oboe, there are some necessary steps:
 2) Clone the Oboe repository - just follow the steps detailed here: https://github.com/google/oboe/blob/main/docs/GettingStarted.md.
    Make sure to correctly link the NDK path in the Oboe build.
 3) Set the CMake variable OBOE_DIR to the path of the cloned Oboe repository.
+4) You can use the "build_all_PaOboe.sh" script to accelerate the process of building with CMake.
 
 TODOs:
 ----  
